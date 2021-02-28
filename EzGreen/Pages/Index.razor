@@ -1,7 +1,47 @@
 ﻿@page "/"
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@using EzGreen.Models
 
-<h1>Hello, world!</h1>
+<h1>Your LocalStorage Note</h1>
 
-Welcome to your new app.
+@if (EzGreenProfile == null)
+{
+    <div>
+        <button class="btn btn-success">הוספת פרופיל חדש</button>
+    </div>
+}
+<br />
+<input type="text" class="form-control" @bind="noteContent" />
+<br />
+<button class="btn btn-success" @onclick="UpdateLocalStorage">שמירה</button>
+<button class="btn btn-danger" @onclick="ClearLocalStorage">מחיקה</button>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code{
+    const string userProfile = "userProfile";
+    string noteContent;
+    EzGreenProfile EzGreenProfile = new EzGreenProfile();
+    List<EzGreenProfile> ezGreenProfiles = new List<EzGreenProfile>();
+
+
+
+    public async void UpdateLocalStorage()
+    {
+        EzGreenProfile EzGreenProfile = new EzGreenProfile();
+        EzGreenProfile.ProfileName = noteContent;
+        EzGreenProfile.ProfilePicture = noteContent;
+
+        await localStorage.SetItemAsync(userProfile, EzGreenProfile);
+    }
+
+    public async void ClearLocalStorage()
+    {
+        noteContent = "";
+        await localStorage.ClearAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        EzGreenProfile = await localStorage.GetItemAsync<EzGreenProfile>(userProfile);
+    }
+}
