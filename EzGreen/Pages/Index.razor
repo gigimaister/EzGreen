@@ -1,8 +1,11 @@
 ﻿@page "/"
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using EzGreen.Models
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Spinner
 
-<h1>Your LocalStorage Note</h1>
+
+<h1 style="text-align:center">Ez Green</h1>
 
 @if (ezGreenProfiles.Count == 0)
 {
@@ -11,16 +14,52 @@
             <label for="formGroupExampleInput2">תו לא נמצא</label>
         </div>
         <br />
-        <button class="btn btn-success">הוספת תו חדש</button>
-        
+        <button class="btn btn-success" @onclick="(()=>ShowNewProfileDialog=true)">הוספת תו חדש</button>
+
     </div>
 }
 <br />
-<input type="text" class="form-control" @bind="noteContent" />
-<br />
-<button class="btn btn-success" @onclick="UpdateLocalStorage">שמירה</button>
-<button class="btn btn-danger" @onclick="ClearLocalStorage">מחיקה</button>
+@*New Profile form*@
+<SfDialog Target="#target"
+          Width="300px"
+          Height="500px"
+          MinHeight="350px"
+          IsModal="true"
+          EnableRtl="true"
+          ShowCloseIcon="true"
+          @bind-Visible="ShowNewProfileDialog">
+    <DialogTemplates>
+        <Header>פרופיל חדש</Header>
+        <Content>
+            <EditForm Model="@EzGreenProfile" OnValidSubmit="ConfirmDeleteYes">
+                <DataAnnotationsValidator />
 
+                <div style="text-align:right">
+                    <input type="text"  class="form-control" placeholder="שם פרטי" @bind-value="EzGreenProfile.ProfileName"/>
+                    <ValidationMessage For="@(() => EzGreenProfile.ProfileName)"></ValidationMessage>
+                </div>
+                <br />
+                <SfSpinner Size="40" Label="" Type="SpinnerType.Bootstrap4" CssClass="e-customClass" Visible="@SpinnerBool"></SfSpinner>
+
+                <div style="text-align:right">
+                    <input type="file" class="form-control" @bind-value="EzGreenProfile.ProfilePicture" accept="image/*" capture>
+                    <ValidationMessage For="@(() => EzGreenProfile.ProfilePicture)"></ValidationMessage>
+                </div>
+                <br />
+                <div class="button-container" style="text-align:center">
+                    <button type="submit" class="btn btn-success">
+                        אישור
+                    </button>
+                    <button style="margin-right:25px"
+                            class="btn btn-danger"
+                            @onclick="(()=>ShowNewProfileDialog=false)">
+                        ביטול
+                    </button>
+                </div>
+            </EditForm>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
 
 @code{
     const string userProfile = "userProfile";
@@ -28,6 +67,11 @@
     EzGreenProfile EzGreenProfile = new EzGreenProfile();
     List<EzGreenProfile> ezGreenProfiles = new List<EzGreenProfile>();
 
+    // Show New Profile Dialog
+    public bool ShowNewProfileDialog { get; set; } = false;
+
+    //Dialog Spinner
+    bool SpinnerBool { get; set; } = false;
 
 
     public async void UpdateLocalStorage()
@@ -48,5 +92,14 @@
     protected override async Task OnInitializedAsync()
     {
         EzGreenProfile = await localStorage.GetItemAsync<EzGreenProfile>(userProfile);
+    }
+
+    private void ConfirmDeleteYes()
+    {
+
+    }
+    private void ConfirmDeleteNo()
+    {
+
     }
 }
