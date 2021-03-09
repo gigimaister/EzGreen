@@ -4,11 +4,12 @@
 @using EzGreen.Models
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Spinner
+@using static System.Net.Mime.MediaTypeNames;
 
 
 <h1 style="text-align:center">Ez Green</h1>
 
-@if ( ezGreenProfiles == null)
+@if ( ezGreenProfiles == null )
 {
     <div class="form-group" style="text-align:right">
         <div class="alert alert-warning" role="alert">
@@ -23,9 +24,10 @@ else
 {
     foreach(var profile in ezGreenProfiles)
     {
-        <div>
-            <label>@profile.ProfileId</label>
-        </div>
+<div>
+    <label>@profile.ProfileId</label>
+    <img src="@profile.ProfilePicture" />
+</div>
     }
 }
 <br />
@@ -53,7 +55,7 @@ else
                 <SfSpinner Size="40" Label="" Type="SpinnerType.Bootstrap4" CssClass="e-customClass" Visible="@SpinnerBool"></SfSpinner>
 
                 <div style="text-align:right">
-                    <input type="file" class="form-control" accept="image/*" capture>
+                    <input id="ImageUpload" type="file" class="form-control" @bind-value="Ppicture" accept="image/*" capture>
                     
                 </div>
                 <br />
@@ -89,9 +91,11 @@ else
 @code{
     const string userProfile = "userProfile";
 
-    string noteContent;
+
     EzGreenProfile EzGreenProfile { get; set; } = new EzGreenProfile();
     List<EzGreenProfile> ezGreenProfiles { get; set; } = new List<EzGreenProfile>();
+    
+    string noteContent;
     string Pname, Ppicture;
 
     // Show New Profile Dialog
@@ -129,6 +133,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+
         ezGreenProfiles = await localStorage.GetItemAsync<List<EzGreenProfile>>(userProfile);
 
     }
@@ -139,8 +144,11 @@ else
 
         try
         {
+
+            var t = Ppicture;
+
             //if no Ez Profiles at all...
-            if (ezGreenProfiles != null )
+            if (ezGreenProfiles != null && ezGreenProfiles.Count > 0)
             {
                 var maxProfileId = ezGreenProfiles.Select(x => x.ProfileId).Max();
                 maxProfileId++;
@@ -163,7 +171,7 @@ else
             {
                 ezGreenProfiles = new List<EzGreenProfile>();
 
-                ezGreenProfiles.Add(new EzGreenProfile { ProfileId = 1, ProfileName = Pname, ProfilePicture = Pname });
+                ezGreenProfiles.Add(new EzGreenProfile { ProfileId = 1, ProfileName = Pname, ProfilePicture = Ppicture });
                 ShowNewProfileDialog = false;
             }
             //insert to LocalStorage

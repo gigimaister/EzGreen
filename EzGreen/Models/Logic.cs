@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace EzGreen.Models
 {
-    public static class Logic
+    public class Logic
     {
         private const int MAX_USERS = 10;
+
         public static bool MaxUsers(int currenUser)
         {    
             if (currenUser > MAX_USERS)
@@ -15,6 +18,6 @@ namespace EzGreen.Models
                 return true;
             }
             return false;
-        }
+        }        
     }
 }

@@ -18,8 +18,9 @@ namespace EzGreen.Models
 
         
         public string ProfilePicture { get; set; }
-
        
+
+
     }
 
     

@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace EzGreen
 {
     public class Program
@@ -17,7 +18,7 @@ namespace EzGreen
         public static async Task Main(string[] args)
         {
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NDA4NjQ1QDMxMzgyZTM0MmUzMEtSN0l1VUVEQm8xYTBROXY0aUZJYnBSclNIN3czY2o3STNkMngwb3dKTW89");
-
+            
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
