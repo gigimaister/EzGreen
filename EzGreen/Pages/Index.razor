@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+
 @using EzGreen.Models
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Spinner
@@ -7,7 +8,7 @@
 
 <h1 style="text-align:center">Ez Green</h1>
 
-@if (ezGreenProfiles.Count == 0)
+@if ( ezGreenProfiles == null)
 {
     <div class="form-group" style="text-align:right">
         <div class="alert alert-warning" role="alert">
@@ -18,7 +19,17 @@
 
     </div>
 }
+else
+{
+    foreach(var profile in ezGreenProfiles)
+    {
+        <div>
+            <label>@profile.ProfileId</label>
+        </div>
+    }
+}
 <br />
+
 @*New Profile form*@
 <SfDialog Target="#target"
           Width="300px"
@@ -32,18 +43,18 @@
         <Header>פרופיל חדש</Header>
         <Content>
             <EditForm Model="@EzGreenProfile" OnValidSubmit="ConfirmDeleteYes">
-                <DataAnnotationsValidator />
+                
 
                 <div style="text-align:right">
-                    <input type="text"  class="form-control" placeholder="שם פרטי" @bind-value="EzGreenProfile.ProfileName"/>
-                    <ValidationMessage For="@(() => EzGreenProfile.ProfileName)"></ValidationMessage>
+                    <input type="text" class="form-control" placeholder="שם פרטי" @bind-value="Pname" />
+                    
                 </div>
                 <br />
                 <SfSpinner Size="40" Label="" Type="SpinnerType.Bootstrap4" CssClass="e-customClass" Visible="@SpinnerBool"></SfSpinner>
 
                 <div style="text-align:right">
-                    <input type="file" class="form-control" @bind-value="EzGreenProfile.ProfilePicture" accept="image/*" capture>
-                    <ValidationMessage For="@(() => EzGreenProfile.ProfilePicture)"></ValidationMessage>
+                    <input type="file" class="form-control" accept="image/*" capture>
+                    
                 </div>
                 <br />
                 <div class="button-container" style="text-align:center">
@@ -61,11 +72,27 @@
     </DialogTemplates>
 </SfDialog>
 
+@*Modal Error*@
+<SfDialog Width="250px" IsModal="true" @bind-Visible="@IsVisible" EnableRtl="true">
+    <DialogEvents OnOverlayClick="@OnOverlayclick">
+    </DialogEvents>
+    <DialogTemplates>
+        <Header>שגיאה!</Header>
+        <Content> @ModalError </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="אישור" IsPrimary="true" OnClick="@CloseDialog" />
+
+    </DialogButtons>
+</SfDialog>
+
 @code{
     const string userProfile = "userProfile";
+
     string noteContent;
-    EzGreenProfile EzGreenProfile = new EzGreenProfile();
-    List<EzGreenProfile> ezGreenProfiles = new List<EzGreenProfile>();
+    EzGreenProfile EzGreenProfile { get; set; } = new EzGreenProfile();
+    List<EzGreenProfile> ezGreenProfiles { get; set; } = new List<EzGreenProfile>();
+    string Pname, Ppicture;
 
     // Show New Profile Dialog
     public bool ShowNewProfileDialog { get; set; } = false;
@@ -73,6 +100,83 @@
     //Dialog Spinner
     bool SpinnerBool { get; set; } = false;
 
+
+    #region MODAL ERROR CONTENT
+    /// <summary>
+    /// Modal Props and actions
+    /// </summary>
+    private bool IsVisible { get; set; } = false;
+
+    //DESTROY MODAL VISABILITY
+    private bool DestroyVisability { get; set; } = false;
+
+    private string ModalError { get; set; } = "";
+
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void OnOverlayclick(MouseEventArgs arg)
+    {
+        this.IsVisible = false;
+    }
+    private void CloseDialog()
+    {
+        this.IsVisible = false;
+    }
+    #endregion
+
+    protected override async Task OnInitializedAsync()
+    {
+        ezGreenProfiles = await localStorage.GetItemAsync<List<EzGreenProfile>>(userProfile);
+
+    }
+
+    //Add New Or More Green Profile
+    private async void ConfirmDeleteYes()
+    {
+
+        try
+        {
+            //if no Ez Profiles at all...
+            if (ezGreenProfiles != null )
+            {
+                var maxProfileId = ezGreenProfiles.Select(x => x.ProfileId).Max();
+                maxProfileId++;
+
+                //Max of 10 Profiles
+                if (!Logic.MaxUsers(maxProfileId))
+                {
+                    ezGreenProfiles.Add(new EzGreenProfile { ProfileId = maxProfileId, ProfileName = Pname, ProfilePicture = Pname });
+
+                }
+                else
+                {
+                    ModalError = "ניתן לרשום עד 10 תוים!";
+                    IsVisible = true;
+
+                    return;
+                }
+            }
+            else
+            {
+                ezGreenProfiles = new List<EzGreenProfile>();
+
+                ezGreenProfiles.Add(new EzGreenProfile { ProfileId = 1, ProfileName = Pname, ProfilePicture = Pname });
+                ShowNewProfileDialog = false;
+            }
+            //insert to LocalStorage
+            await localStorage.SetItemAsync(userProfile, ezGreenProfiles);
+            ShowNewProfileDialog = false;
+            await OnInitializedAsync();
+        }
+        catch(Exception e)
+        {
+            ShowNewProfileDialog = false;
+            Console.WriteLine(e.Message);
+        }
+    }
 
     public async void UpdateLocalStorage()
     {
@@ -83,23 +187,12 @@
         await localStorage.SetItemAsync(userProfile, EzGreenProfile);
     }
 
+
     public async void ClearLocalStorage()
     {
         noteContent = "";
         await localStorage.ClearAsync();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        EzGreenProfile = await localStorage.GetItemAsync<EzGreenProfile>(userProfile);
-    }
 
-    private void ConfirmDeleteYes()
-    {
-
-    }
-    private void ConfirmDeleteNo()
-    {
-
-    }
 }
