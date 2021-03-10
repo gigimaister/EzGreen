@@ -4,7 +4,7 @@
 @using EzGreen.Models
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Spinner
-@using static System.Net.Mime.MediaTypeNames;
+
 
 
 <h1 style="text-align:center">Ez Green</h1>
@@ -108,7 +108,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-
+        ClearLocalStorage();
         ezGreenProfiles = await localStorage.GetItemAsync<List<EzGreenProfile>>(userProfile);
 
     }
@@ -166,7 +166,8 @@ else
 
     //LocalStorage
     #region LocalStorage Methods
-    //Update
+
+    //Update LStorage
     public async void UpdateLocalStorage()
     {
         EzGreenProfile EzGreenProfile = new EzGreenProfile();
@@ -175,12 +176,14 @@ else
 
         await localStorage.SetItemAsync(userProfile, EzGreenProfile);
     }
-    //Clear
+
+    //ClearLStorage
     public async void ClearLocalStorage()
     {
         noteContent = "";
         await localStorage.ClearAsync();
     }
+
     #endregion
 
     //Modal
