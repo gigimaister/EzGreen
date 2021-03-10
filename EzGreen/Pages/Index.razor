@@ -94,7 +94,7 @@ else
 
     EzGreenProfile EzGreenProfile { get; set; } = new EzGreenProfile();
     List<EzGreenProfile> ezGreenProfiles { get; set; } = new List<EzGreenProfile>();
-    
+
     string noteContent;
     string Pname, Ppicture;
 
@@ -144,8 +144,11 @@ else
 
         try
         {
+            //Getting Image path as string
+            var imagePath = Ppicture;
 
-            var t = Ppicture;
+            //encode to Base64
+            string imgBase64String = Logic.GetBase64StringForImage(imagePath);
 
             //if no Ez Profiles at all...
             if (ezGreenProfiles != null && ezGreenProfiles.Count > 0)

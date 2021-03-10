@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-
+﻿
+using System;
 
 namespace EzGreen.Models
 {
@@ -18,6 +14,15 @@ namespace EzGreen.Models
                 return true;
             }
             return false;
-        }        
+
+           
+        }
+
+        public static string GetBase64StringForImage(string imgPath)
+        {
+            byte[] imageBytes = System.IO.File.ReadAllBytes(imgPath);
+            string base64String = Convert.ToBase64String(imageBytes);
+            return base64String;
+        }
     }
 }
