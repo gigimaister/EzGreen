@@ -105,31 +105,6 @@ else
     bool SpinnerBool { get; set; } = false;
 
 
-    #region MODAL ERROR CONTENT
-    /// <summary>
-    /// Modal Props and actions
-    /// </summary>
-    private bool IsVisible { get; set; } = false;
-
-    //DESTROY MODAL VISABILITY
-    private bool DestroyVisability { get; set; } = false;
-
-    private string ModalError { get; set; } = "";
-
-    private void OpenDialog()
-    {
-        this.IsVisible = true;
-    }
-
-    private void OnOverlayclick(MouseEventArgs arg)
-    {
-        this.IsVisible = false;
-    }
-    private void CloseDialog()
-    {
-        this.IsVisible = false;
-    }
-    #endregion
 
     protected override async Task OnInitializedAsync()
     {
@@ -189,6 +164,9 @@ else
         }
     }
 
+    //LocalStorage
+    #region LocalStorage Methods
+    //Update
     public async void UpdateLocalStorage()
     {
         EzGreenProfile EzGreenProfile = new EzGreenProfile();
@@ -197,13 +175,39 @@ else
 
         await localStorage.SetItemAsync(userProfile, EzGreenProfile);
     }
-
-
+    //Clear
     public async void ClearLocalStorage()
     {
         noteContent = "";
         await localStorage.ClearAsync();
     }
+    #endregion
 
+    //Modal
+    #region MODAL ERROR CONTENT
+    /// <summary>
+    /// Modal Props and actions
+    /// </summary>
+    private bool IsVisible { get; set; } = false;
+
+    //DESTROY MODAL VISABILITY
+    private bool DestroyVisability { get; set; } = false;
+
+    private string ModalError { get; set; } = "";
+
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void OnOverlayclick(MouseEventArgs arg)
+    {
+        this.IsVisible = false;
+    }
+    private void CloseDialog()
+    {
+        this.IsVisible = false;
+    }
+    #endregion
 
 }
