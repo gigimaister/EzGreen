@@ -13,9 +13,7 @@ namespace EzGreen.Models
             {
                 return true;
             }
-            return false;
-
-           
+            return false;           
         }
 
         public static string GetBase64StringForImage(string imgPath)

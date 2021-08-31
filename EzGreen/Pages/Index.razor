@@ -106,7 +106,6 @@ else
     bool SpinnerBool { get; set; } = false;
 
 
-
     protected override async Task OnInitializedAsync()
     {
         ezGreenProfiles = await localStorage.GetItemAsync<List<EzGreenProfile>>(userProfile);
@@ -124,7 +123,7 @@ else
             //encode to Base64
             string imgBase64String = Logic.GetBase64StringForImage(imagePath);
 
-            //if no Ez Profiles at all...
+            //if we have Ez Profiles
             if (ezGreenProfiles != null && ezGreenProfiles.Count > 0)
             {
                 var maxProfileId = ezGreenProfiles.Select(x => x.ProfileId).Max();
@@ -140,10 +139,10 @@ else
                 {
                     ModalError = "ניתן לרשום עד 10 תוים!";
                     IsVisible = true;
-
                     return;
                 }
             }
+            //if no Ez Profiles at all...
             else
             {
                 ezGreenProfiles = new List<EzGreenProfile>();

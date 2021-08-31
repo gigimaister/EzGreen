@@ -8,20 +8,9 @@ namespace EzGreen.Models
 {
     
     public class EzGreenProfile
-    {
-        
-
-        public int ProfileId { get; set; }
-
-        
-        public string ProfileName { get; set; }
-
-        
-        public string ProfilePicture { get; set; }
-       
-
-
-    }
-
-    
+    {      
+        public int ProfileId { get; set; }       
+        public string ProfileName { get; set; }       
+        public string ProfilePicture { get; set; }      
+    }  
 }
